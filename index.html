@@ -121,19 +121,17 @@
 
         <!-- Touch Controls for Mobile Devices -->
         <section class="touch-controls" id="touch-controller">
-            <div class="touch-row">
-                <button id="btn-hold" class="touch-btn action-btn">HOLD</button>
-                <button id="btn-rotate" class="touch-btn action-btn">ROTATE</button>
-                <button id="btn-drop" class="touch-btn action-btn">DROP</button>
-            </div>
-            <div class="touch-row controller-dpad">
-                <div class="dpad-spacer"></div>
-                <button id="btn-up" class="touch-btn dpad-btn" style="display:none;">UP</button> <!-- 非表示、rotateで統一 -->
-                <div class="dpad-spacer"></div>
-                
+            <!-- Left Side: D-Pad for movements -->
+            <div class="touch-group left-group">
                 <button id="btn-left" class="touch-btn dpad-btn">←</button>
                 <button id="btn-down" class="touch-btn dpad-btn">↓</button>
                 <button id="btn-right" class="touch-btn dpad-btn">→</button>
+            </div>
+            <!-- Right Side: Action buttons -->
+            <div class="touch-group right-group">
+                <button id="btn-hold" class="touch-btn action-btn">HOLD</button>
+                <button id="btn-rotate" class="touch-btn action-btn">ROTATE</button>
+                <button id="btn-drop" class="touch-btn action-btn">DROP</button>
             </div>
         </section>
         

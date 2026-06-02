@@ -962,17 +962,69 @@ class TetrisGame {
             'btn-hold': () => this.hold()
         };
 
+        const dasDelay = 220; // delay before auto-repeat starts (ms)
+        const arrInterval = 45; // auto-repeat interval (ms)
+        const activeTimers = {};
+
         Object.entries(touchBtns).forEach(([id, handler]) => {
             const btn = document.getElementById(id);
             if (!btn) return;
 
-            btn.addEventListener('touchstart', (e) => {
+            const isRepeatable = ['btn-left', 'btn-right', 'btn-down'].includes(id);
+
+            const startAction = (e) => {
                 e.preventDefault();
-                // Ensure audio context is ready on first touch
                 this.sound.resume();
+                
+                // Immediately perform the action
                 handler();
                 this.draw();
-            }, { passive: false });
+
+                // Subtle tactile feedback (if supported)
+                if (navigator.vibrate) {
+                    try {
+                        navigator.vibrate(12);
+                    } catch (err) {
+                        // Ignore any browser security restrictions for vibration
+                    }
+                }
+
+                if (isRepeatable) {
+                    clearTimers(id);
+
+                    // Setup DAS/ARR timers
+                    activeTimers[id] = {
+                        timeout: setTimeout(() => {
+                            activeTimers[id].interval = setInterval(() => {
+                                handler();
+                                this.draw();
+                            }, arrInterval);
+                        }, dasDelay),
+                        interval: null
+                    };
+                }
+            };
+
+            const stopAction = (e) => {
+                e.preventDefault();
+                if (isRepeatable) {
+                    clearTimers(id);
+                }
+            };
+
+            const clearTimers = (buttonId) => {
+                if (activeTimers[buttonId]) {
+                    clearTimeout(activeTimers[buttonId].timeout);
+                    if (activeTimers[buttonId].interval) {
+                        clearInterval(activeTimers[buttonId].interval);
+                    }
+                    delete activeTimers[buttonId];
+                }
+            };
+
+            btn.addEventListener('touchstart', startAction, { passive: false });
+            btn.addEventListener('touchend', stopAction, { passive: false });
+            btn.addEventListener('touchcancel', stopAction, { passive: false });
         });
     }
 }
